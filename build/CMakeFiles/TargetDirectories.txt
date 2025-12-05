@@ -1,0 +1,3 @@
+C:/Users/cauam/Downloads/FROGGY/build/CMakeFiles/Froggy.dir
+C:/Users/cauam/Downloads/FROGGY/build/CMakeFiles/edit_cache.dir
+C:/Users/cauam/Downloads/FROGGY/build/CMakeFiles/rebuild_cache.dir
