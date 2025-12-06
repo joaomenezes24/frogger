@@ -66,8 +66,16 @@ bool Shader::loadFromFiles(const std::string &vertPath, const std::string &fragP
 void Shader::use() const { if (ID) glUseProgram(ID); }
 
 void Shader::setMat4(const std::string &name, const glm::mat4 &mat) const {
-    int loc = glGetUniformLocation(ID, name.c_str()); if (loc != -1) glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(mat));
+    int loc = glGetUniformLocation(ID, name.c_str()); 
+    if (loc != -1) glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(mat));
 }
+
 void Shader::setVec3(const std::string &name, const glm::vec3 &v) const {
-    int loc = glGetUniformLocation(ID, name.c_str()); if (loc != -1) glUniform3f(loc, v.x, v.y, v.z);
+    int loc = glGetUniformLocation(ID, name.c_str()); 
+    if (loc != -1) glUniform3f(loc, v.x, v.y, v.z);
+}
+
+void Shader::setInt(const std::string &name, int value) const {
+    int loc = glGetUniformLocation(ID, name.c_str()); 
+    if (loc != -1) glUniform1i(loc, value);
 }

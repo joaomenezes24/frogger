@@ -17,6 +17,7 @@ public:
     void moveLeft();
     void moveRight();
     glm::vec3 getPosition() const { return position; }
+    void setPosition(const glm::vec3 &pos) { position = pos; }  // Nova função
 private:
     Model *model = nullptr;
     glm::vec3 position{0.0f, 0.0f, 0.0f};

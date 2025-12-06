@@ -10,8 +10,31 @@ bool Renderer::init(int w, int h) {
         return false;
     }
     projection = glm::perspective(glm::radians(60.0f), width / (float)height, 0.1f, 200.0f);
+    
+    // Configura a câmera inicial
+    updateCamera();
+    
     glEnable(GL_DEPTH_TEST);
     return true;
+}
+
+void Renderer::updateCamera() {
+    // Posição da câmera baseada nos parâmetros
+    glm::vec3 cameraPos = glm::vec3(0.0f, cameraTilt, cameraDistance);
+    glm::vec3 cameraTarget = glm::vec3(0.0f, 0.0f, 0.0f);
+    glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
+    
+    view = glm::lookAt(cameraPos, cameraTarget, cameraUp);
+}
+
+void Renderer::setCameraTilt(float tilt) {
+    cameraTilt = tilt;
+    updateCamera();
+}
+
+void Renderer::setCameraDistance(float distance) {
+    cameraDistance = distance;
+    updateCamera();
 }
 
 void Renderer::beginFrame() {
@@ -29,10 +52,14 @@ void Renderer::renderModel(const Model &m, const glm::vec3 &pos, const glm::vec3
     glm::mat4 model = glm::mat4(1.0f);
     model = glm::translate(model, pos);
     model = glm::scale(model, scale);
-    glm::mat4 view = glm::lookAt(glm::vec3(0.0f, 10.0f, 18.0f), glm::vec3(0.0f,0.0f,0.0f), glm::vec3(0,1,0));
     shader.setMat4("projection", projection);
     shader.setMat4("view", view);
     shader.setMat4("model", model);
     shader.setVec3("lightPos", glm::vec3(10.0f, 10.0f, 10.0f));
+    shader.setInt("useVertexColor", 0);
     m.draw();
+}
+
+void Renderer::renderRoad(Road &road) {
+    road.render(shader, projection, view);
 }
