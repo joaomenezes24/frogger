@@ -1,0 +1,13 @@
+Set-Location "C:\Users\joaom\OneDrive\Documentos\4 periodo\Computacao Grafica\jogo\frogger"
+Get-ChildItem build\*.exe -Name
+
+if (Test-Path .\build\Froggy.exe) {
+  Write-Host "Running .\build\Froggy.exe"
+  & ".\build\Froggy.exe"
+} elseif (Test-Path .\build\Release\Froggy.exe) {
+  Write-Host "Running .\build\Release\Froggy.exe"
+  & ".\build\Release\Froggy.exe"
+} else {
+  Write-Host "Executavel nao encontrado. Conteudo de build:"
+  Get-ChildItem build | Select-Object Name,Length
+}

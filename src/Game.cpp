@@ -8,6 +8,11 @@
 bool Game::init(int width, int height) {
     if (!renderer.init(width, height)) return false;
 
+    // Inicializar o chão com número de faixas configurável
+    // Você pode mudar este número facilmente (3, 5, 7, 9, etc)
+    int numLanes = 5;  // MUDE ESTE VALOR PARA ALTERAR O NÚMERO DE FAIXAS
+    ground.init(numLanes);
+
     // Load models (assets should exist)
     if (!frogModel.load("assets/sapo.obj")) {
         std::cerr << "Warning: failed to load frog model\n";
@@ -63,7 +68,8 @@ void Game::update(float dt) {
     spawnTimer += dt;
     if (spawnTimer > 1.2f) {
         spawnTimer = 0.0f;
-        int lane = (std::rand() % 5) - 2; // -2..2
+        int numLanes = ground.getNumLanes();
+        int lane = (std::rand() % numLanes) - (numLanes / 2); // Gera lanes baseado no número configurado
         float z = lane * 2.5f;
         float speed = 4.0f + (std::rand() % 6);
         int dir = (std::rand() % 2) ? 1 : -1;
@@ -79,7 +85,8 @@ void Game::render(GLFWwindow *window) {
     (void)window;
     renderer.beginFrame();
 
-    // ground simple: we just render models; you can add a flat quad later
+    // Renderizar o chão primeiro
+    ground.render(renderer);
 
     player.render(renderer);
     for (auto &c : cars) c->render(renderer);

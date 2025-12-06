@@ -1,27 +1,26 @@
 #pragma once
-
-#include <GLFW/glfw3.h>   // <<-- garante que GLFWwindow È visto de forma consistente
-#include "Frog.h"
-#include "Car.h"
 #include "Renderer.h"
+#include "Player.h"
+#include "Car.h"
+#include "Ground.h"
 #include <vector>
 #include <memory>
 
+struct GLFWwindow;
+
 class Game {
 public:
-    Game() = default;
-    ~Game() = default;
     bool init(int width, int height);
-
-    // Use GLFWwindow* consistently (no 'class'/'struct' qualifier)
     void processInput(GLFWwindow *window);
     void update(float dt);
     void render(GLFWwindow *window);
 
 private:
     Renderer renderer;
-    Frog player;
+    Ground ground;  // Adicionar o ch√£o
+    Player player;
+    Model frogModel;
+    Model carModelA, carModelB;
     std::vector<std::unique_ptr<Car>> cars;
-    Model carModelA, carModelB, frogModel;
     float spawnTimer = 0.0f;
 };
