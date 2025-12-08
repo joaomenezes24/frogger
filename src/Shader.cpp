@@ -79,3 +79,14 @@ void Shader::setInt(const std::string &name, int value) const {
     int loc = glGetUniformLocation(ID, name.c_str()); 
     if (loc != -1) glUniform1i(loc, value);
 }
+
+void Shader::setBool(const std::string &name, bool value) const {
+    int loc = glGetUniformLocation(ID, name.c_str()); 
+    if (loc != -1) glUniform1i(loc, (int)value);
+}
+
+// --- ESTA É A FUNÇÃO QUE ESTAVA FALTANDO ---
+void Shader::setFloat(const std::string &name, float value) const {
+    int loc = glGetUniformLocation(ID, name.c_str()); 
+    if (loc != -1) glUniform1f(loc, value);
+}

@@ -1,6 +1,6 @@
 #pragma once
 
-// Forward declaration instead of including GLFW
+// Forward declaration
 struct GLFWwindow;
 
 #include "Frog.h"
@@ -9,8 +9,10 @@ struct GLFWwindow;
 #include "Road.h"
 #include <vector>
 #include <memory>
+#include <string>
 
-class Game {
+class Game
+{
 public:
     Game() = default;
     ~Game() = default;
@@ -24,15 +26,32 @@ private:
     Renderer renderer;
     Frog player;
     std::vector<std::unique_ptr<Car>> cars;
-    Model carModelA, carModelB, frogModel;
+
+    // Vetor para guardar os 8 modelos de carro
+    std::vector<Model> carModels;
+
+    Model frogModel, wallModel, bushModel;
+
     Road road;
     float spawnTimer = 0.0f;
+    float wallZ = 0.0f;
     
-    // Configurações da estrada (MUDE ESTES VALORES)
-    static constexpr int NUM_LANES = 5;        // Número de faixas
-    static constexpr float LANE_WIDTH = 3.0f;  // Largura de cada faixa
-    static constexpr float ROAD_LENGTH = 120.0f; // Comprimento total da estrada
-    
-    // Nova função: calcula velocidade baseada na faixa
+    // --- NOVO: Limite dos arbustos iniciais ---
+    float startBushZ = 0.0f; 
+
+    // Variáveis de Estado
+    int lives = 5;
+    bool gameWon = false;
+    bool gameLost = false;
+    GLFWwindow *gameWindow = nullptr;
+
+    void resetGame();
+    void updateTitle();
+    bool canMoveTo(float newX, float newZ);
+
+    static constexpr int NUM_LANES = 5;
+    static constexpr float LANE_WIDTH = 3.0f;
+    static constexpr float ROAD_LENGTH = 120.0f;
+
     float getLaneSpeed(int lane) const;
 };

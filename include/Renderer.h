@@ -4,28 +4,38 @@
 #include "Model.h"
 #include "Road.h"
 
-class Renderer {
+class Renderer
+{
 public:
     Renderer() = default;
     bool init(int w, int h);
     void beginFrame();
     void endFrame();
-    void renderModel(const Model &m, const glm::vec3 &pos, const glm::vec3 &scale = {1,1,1});
-    void renderRoad(Road &road);
-    
-    // Novo: função para ajustar a inclinação da câmera
+
     void setCameraTilt(float tilt);
     void setCameraDistance(float distance);
-    
+
+    // --- MUDANÇA: Adicionei 'glm::vec3 color' no final dessas funções ---
+
+    // Para Carros (Padrão: Branco/Sem tintura extra)
+    void renderModel(const Model &m, const glm::vec3 &pos, const glm::vec3 &scale, glm::vec3 color = glm::vec3(1.0f));
+
+    // Para Sapo (Padrão: Branco/Sem tintura extra)
+    void renderModel(const Model &m, const glm::vec3 &pos, const glm::vec3 &scale, float rotationY, glm::vec3 color = glm::vec3(1.0f));
+
+    // Para Muro e Arbustos (Aqui passaremos a cor desejada)
+    void renderModelWithMatrix(const Model &model, glm::mat4 matrix, glm::vec3 color);
+
+    void renderRoad(Road &road);
+
 private:
-    int width = 1280, height = 720;
+    void updateCamera();
+
+    int width, height;
+    float cameraTilt = 0.0f;
+    float cameraDistance = 0.0f;
+
     Shader shader;
     glm::mat4 projection;
     glm::mat4 view;
-    
-    // Novos: parâmetros da câmera
-    float cameraTilt = 10.0f;      // Altura da câmera (quanto maior, mais de cima)
-    float cameraDistance = 18.0f;  // Distância da câmera
-    
-    void updateCamera(); // Função auxiliar para atualizar a view matrix
 };
