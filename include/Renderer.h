@@ -18,7 +18,6 @@ public:
     void setCameraDistance(float distance);
     void renderBoundaryLines(BoundaryLines& lines);
 
-    // --- MUDANÇA: Adicionei 'glm::vec3 color' no final dessas funções ---
 
     // Para Carros (Padrão: Branco/Sem tintura extra)
     void renderModel(const Model &m, const glm::vec3 &pos, const glm::vec3 &scale, glm::vec3 color = glm::vec3(1.0f));

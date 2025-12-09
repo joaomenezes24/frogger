@@ -1,6 +1,5 @@
 #pragma once
 
-// Forward declaration
 struct GLFWwindow;
 
 #include "Frog.h"
@@ -22,14 +21,13 @@ public:
     void processInput(GLFWwindow *window);
     void update(float dt);
     void render(GLFWwindow *window);
-    void startGame();  // NOVO método
+    void startGame();  
 
 private:
     Renderer renderer;
     Frog player;
     std::vector<std::unique_ptr<Car>> cars;
 
-    // Vetor para guardar os 8 modelos de carro
     std::vector<Model> carModels;
 
     Model frogModel, wallModel, bushModel;
@@ -59,7 +57,6 @@ private:
     static constexpr float LANE_WIDTH = 3.0f;
     static constexpr float ROAD_LENGTH = 120.0f;
 
-    // NOVAS CONSTANTES PARA AS LINHAS DE LIMITE:
     static constexpr float LEFT_BOUNDARY_X = -20.0f;
     static constexpr float RIGHT_BOUNDARY_X = 20.0f;
 

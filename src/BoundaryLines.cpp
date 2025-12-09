@@ -11,7 +11,7 @@ void BoundaryLines::init(float xPosition, float startZ, float endZ, float dashLe
 {
     std::vector<float> vertices;
     
-    float y = 0.08f; // Altura da linha (acima do chão para evitar z-fighting)
+    float y = 0.08f; 
     float currentZ = startZ;
     float totalDistance = std::abs(endZ - startZ);
     float direction = (endZ > startZ) ? 1.0f : -1.0f;
@@ -118,7 +118,7 @@ void BoundaryLines::init(float xPosition, float startZ, float endZ, float dashLe
             break;
     }
     
-    vertexCount = vertices.size() / 11; // 11 floats por vértice
+    vertexCount = vertices.size() / 11; 
     setupMesh(vertices);
 }
 
@@ -131,20 +131,15 @@ void BoundaryLines::setupMesh(const std::vector<float>& vertices)
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
     glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float), vertices.data(), GL_STATIC_DRAW);
     
-    // Layout compatível com o shader basic.vert
-    // location 0: position (x, y, z)
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 11 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
     
-    // location 1: normal (nx, ny, nz)
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 11 * sizeof(float), (void*)(3 * sizeof(float)));
     glEnableVertexAttribArray(1);
     
-    // location 2: texCoord (u, v)
     glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 11 * sizeof(float), (void*)(6 * sizeof(float)));
     glEnableVertexAttribArray(2);
     
-    // location 3: color (r, g, b)
     glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, 11 * sizeof(float), (void*)(8 * sizeof(float)));
     glEnableVertexAttribArray(3);
     

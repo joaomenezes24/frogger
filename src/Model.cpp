@@ -2,8 +2,6 @@
 #include <glad/glad.h>
 #include <iostream>
 
-// tinyobjloader header: you can either install via vcpkg (tinyobjloader) or
-// drop tiny_obj_loader.h into include/ (rename if needed).
 #include "tiny_obj_loader.h"
 
 Model::Model(const std::string &path) { load(path); }
@@ -23,7 +21,7 @@ bool Model::load(const std::string &path) {
     std::vector<tinyobj::material_t> materials;
     std::string warn, err;
 
-    std::string basedir; // tinyobj will read .mtl using the .obj path automatically
+    std::string basedir; 
     bool ret = tinyobj::LoadObj(&attrib, &shapes, &materials, &warn, &err, path.c_str(), nullptr, true);
     if (!warn.empty()) std::cout << "tinyobj warn: " << warn << "\n";
     if (!err.empty()) std::cerr << "tinyobj err: " << err << "\n";
@@ -32,7 +30,6 @@ bool Model::load(const std::string &path) {
         return false;
     }
 
-    // For each shape create a mesh
     for (const auto &shape : shapes) {
         struct Vertex { glm::vec3 pos; glm::vec3 normal; glm::vec2 uv; };
         std::vector<Vertex> vertices;
@@ -60,7 +57,6 @@ bool Model::load(const std::string &path) {
                 v.uv = { attrib.texcoords[2*ti+0], attrib.texcoords[2*ti+1] };
             } else v.uv = {0.0f,0.0f};
 
-            // Pack indices to unique key to avoid duplicates
             uint64_t key = pack_index(vi, ni, ti);
             auto it = uniqueVertices.find(key);
             if (it != uniqueVertices.end()) {
@@ -85,7 +81,6 @@ bool Model::load(const std::string &path) {
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.EBO);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size()*sizeof(unsigned int), indices.data(), GL_STATIC_DRAW);
 
-        // layout: 0 pos, 1 normal, 2 uv
         glEnableVertexAttribArray(0); glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, pos));
         glEnableVertexAttribArray(1); glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, normal));
         glEnableVertexAttribArray(2); glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, uv));

@@ -13,7 +13,6 @@ void Frog::update(float dt) {
 
 void Frog::render(Renderer &renderer) {
     if (model) {
-        // (LEMBRAR DE CORRIGIR A DESGRAÇA DO MODELO DEPOIS. Ele fica verde caso o modelo falhe)
         renderer.renderModel(*model, position, scale, rotation, glm::vec3(0.0f, 1.0f, 0.0f));
     }
 }

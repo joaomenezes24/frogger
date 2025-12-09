@@ -17,23 +17,23 @@ public:
 
     int getNumLanes() const { return numLanes; }
     float getLaneWidth() const { return laneWidth; }
-    float getLaneZ(int lane) const; // retorna a posição Z de uma faixa específica
-    float getSidewalkZ() const;     // Nova: retorna a posição Z da calçada
+    float getLaneZ(int lane) const; 
+    float getSidewalkZ() const;     
 
 private:
     void createRoadMesh();
     void createLaneLinesMesh();
-    void createSidewalkMesh(); // Nova: cria a calçada
+    void createSidewalkMesh(); 
 
     int numLanes;
     float laneWidth;
     float roadLength;
-    float sidewalkWidth = 3.0f; // Largura da calçada
+    float sidewalkWidth = 3.0f; 
 
     GLuint roadVAO, roadVBO;
     GLuint linesVAO, linesVBO;
-    GLuint sidewalkVAO, sidewalkVBO; // Nova: buffers da calçada
+    GLuint sidewalkVAO, sidewalkVBO; 
     int roadVertexCount;
     int linesVertexCount;
-    int sidewalkVertexCount; // Nova: contador de vértices da calçada
+    int sidewalkVertexCount; 
 };

@@ -5,7 +5,6 @@
 #include <GLFW/glfw3.h>
 #include "Game.h"
 
-// No main.cpp, após game.init(), adicione esta linha:
 
 int main() {
     if (!glfwInit()) {
@@ -31,7 +30,7 @@ int main() {
     using clock = std::chrono::high_resolution_clock;
     auto last = clock::now();
     
-    bool gameStarted = false;  // Flag para iniciar o jogo
+    bool gameStarted = false;  
 
     while (!glfwWindowShouldClose(window)) {
         auto now = clock::now();

@@ -59,15 +59,15 @@ void setupMaterial(const Shader &shader, const Model *model, glm::vec3 color, bo
         // MODO SOMBRA
         shader.setBool("useTexture", false);
         shader.setBool("useVertexColor", false);
-        shader.setBool("useLighting", false);                       // Sem luz na sombra
-        shader.setFloat("alpha", 0.6f);                             // Transparente
-        shader.setVec3("objectColor", glm::vec3(0.0f, 0.0f, 0.0f)); // Preto
+        shader.setBool("useLighting", false);                       
+        shader.setFloat("alpha", 0.6f);                             
+        shader.setVec3("objectColor", glm::vec3(0.0f, 0.0f, 0.0f)); 
     }
     else
     {
         // MODO NORMAL
         shader.setBool("useLighting", true);
-        shader.setFloat("alpha", 1.0f); // Opaco
+        shader.setFloat("alpha", 1.0f); 
 
         if (forceVertexColor)
         {
@@ -100,10 +100,9 @@ void Renderer::renderRoad(Road &road)
     shader.setMat4("projection", projection);
     shader.setMat4("view", view);
 
-    // IMPORTANTE: Configurar para usar Vertex Color (cores da estrada)
     shader.setBool("useTexture", false);
-    shader.setBool("useVertexColor", true);  // <-- DEVE ESTAR TRUE
-    shader.setBool("useLighting", true);     // <-- DEVE ESTAR TRUE
+    shader.setBool("useVertexColor", true);  
+    shader.setBool("useLighting", true);     
     shader.setFloat("alpha", 1.0f);
 
     road.render(shader, projection, view);
@@ -180,7 +179,6 @@ void Renderer::renderModelWithMatrix(const Model &model, glm::mat4 matrix, glm::
     glBindTexture(GL_TEXTURE_2D, 0);
 }
 
-// SUBSTITUA completamente o método renderBoundaryLines no Renderer.cpp:
 
 void Renderer::renderBoundaryLines(BoundaryLines& lines)
 {
@@ -189,12 +187,11 @@ void Renderer::renderBoundaryLines(BoundaryLines& lines)
     shader.setMat4("view", view);
     shader.setMat4("model", glm::mat4(1.0f));
     
-    // Usar objectColor em vez de vertex color
     shader.setBool("useTexture", false);
-    shader.setBool("useVertexColor", false);  // DESLIGAR vertex color
+    shader.setBool("useVertexColor", false);  
     shader.setBool("useLighting", false);
     shader.setFloat("alpha", 1.0f);
-    shader.setVec3("objectColor", glm::vec3(1.0f, 1.0f, 0.0f)); // AMARELO PURO
+    shader.setVec3("objectColor", glm::vec3(1.0f, 1.0f, 0.0f)); 
     
     lines.render();
 }

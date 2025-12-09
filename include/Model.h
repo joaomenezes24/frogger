@@ -3,8 +3,6 @@
 #include <vector>
 #include <glm/glm.hpp>
 
-// Se você usar a classe Shader no draw, precisaria incluir ou declarar aqui.
-// Por enquanto, mantive como no seu snippet original.
 class Shader;
 
 struct Mesh
@@ -24,20 +22,15 @@ public:
 
     bool load(const std::string &path);
 
-    // Se o seu Renderer passa o shader, mude para: void draw(Shader &shader) const;
     void draw() const;
 
-    // --- NOVOS MÉTODOS PARA TEXTURA ---
 
-    // Define o ID da textura (gerado pelo loadTextureFromFile)
     void setTextureID(unsigned int id) { textureID = id; }
 
-    // Retorna o ID para o Renderer usar noglBindTexture
     unsigned int getTextureID() const { return textureID; }
 
 private:
     std::vector<Mesh> meshes;
 
-    // Guarda o ID da textura OpenGL. 0 significa "Sem Textura".
     unsigned int textureID = 0;
 };

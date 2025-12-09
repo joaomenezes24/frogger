@@ -144,16 +144,11 @@ void Game::startGame()
     cars.push_back(std::move(c2));
 }
 
-// SUBSTITUA a função resetGame no Game.cpp por esta:
-
 void Game::resetGame()
 {
     startGame();
-    updateTitle();  // Atualizar título imediatamente
+    updateTitle();  
 }
-
-
-// SUBSTITUA a função updateTitle no Game.cpp por esta:
 
 void Game::updateTitle()
 {
@@ -228,11 +223,9 @@ void Game::processInput(GLFWwindow *window)
         return;
     }
     
-    // BLOQUEAR MOVIMENTO DURANTE COUNTDOWN
     if (countdownActive)
         return;
 
-    // ... resto do código de processInput continua normal ...
     static bool pressedForward = false, pressedLeft = false, pressedBack = false, pressedRight = false;
     glm::vec3 currentPos = player.getPosition();
     float step = 3.0f;
@@ -296,18 +289,11 @@ void Game::processInput(GLFWwindow *window)
     return;
 }
 
-// SUBSTITUA a função update no Game.cpp por esta:
-
-// SUBSTITUA a função update no Game.cpp por esta:
-
-// SUBSTITUA a função update no Game.cpp por esta:
-
 void Game::update(float dt)
 {
     if (gameWon || gameLost)
         return;
 
-    // PROCESSAR COUNTDOWN
     if (countdownActive)
     {
         countdownTimer -= dt;
@@ -338,11 +324,10 @@ void Game::update(float dt)
         {
             countdownActive = false;
             countdownTimer = 0.0f;
-            updateTitle(); // Atualizar para mostrar vidas
+            updateTitle();
             std::cout << "Countdown terminado! Jogo iniciado!" << std::endl;
         }
         
-        // Carros continuam se movendo durante countdown
         for (auto &c : cars)
             c->update(dt);
         
@@ -389,10 +374,9 @@ void Game::update(float dt)
                 spawnTimer = 0.5f;
         }
         
-        return; // Não processar colisão durante countdown
+        return; 
     }
 
-    // JOGO NORMAL (após countdown)
     player.update(dt);
 
     glm::vec3 playerPos = player.getPosition();
@@ -472,10 +456,8 @@ void Game::render(GLFWwindow *window)
     (void)window;
     renderer.beginFrame();
 
-    // 1. RENDERIZAR ESTRADA PRIMEIRO (com suas cores)
     renderer.renderRoad(road);
 
-    // 2. RENDERIZAR MURO
     glm::mat4 wallModelMatrix = glm::mat4(1.0f);
     wallModelMatrix = glm::translate(wallModelMatrix, glm::vec3(-7.5f, -0.4f, wallZ));
     wallModelMatrix = glm::rotate(wallModelMatrix, glm::radians(-180.0f), glm::vec3(1.0f, 0.0f, 0.0f));
@@ -483,7 +465,6 @@ void Game::render(GLFWwindow *window)
     wallModelMatrix = glm::scale(wallModelMatrix, glm::vec3(2.7f, 2.7f, 2.7f));
     renderer.renderModelWithMatrix(wallModel, wallModelMatrix, glm::vec3(0.3f, 0.15f, 0.05f));
 
-    // 3. RENDERIZAR FLORESTA
     float startForestZ = wallZ - 0.99f;
     float rowSpacing = 2.0f;
     for (int i = 0; i < 5; i++)
@@ -495,7 +476,6 @@ void Game::render(GLFWwindow *window)
         renderer.renderModelWithMatrix(bushModel, forestMatrix, glm::vec3(0.0f, 0.4f, 0.0f));
     }
 
-    // 4. RENDERIZAR ARBUSTOS DO INÍCIO
     float sidewalkZ = road.getSidewalkZ();
     float bushZ = sidewalkZ + 2.45f;
     glm::mat4 bushModelMatrix = glm::mat4(1.0f);
@@ -503,12 +483,10 @@ void Game::render(GLFWwindow *window)
     bushModelMatrix = glm::scale(bushModelMatrix, glm::vec3(1.0f, 1.0f, 1.0f));
     renderer.renderModelWithMatrix(bushModel, bushModelMatrix, glm::vec3(0.1f, 0.6f, 0.1f));
 
-    // 5. RENDERIZAR SAPO E CARROS
     player.render(renderer);
     for (auto &c : cars)
         c->render(renderer);
 
-    // 6. RENDERIZAR LINHAS DE LIMITE POR ÚLTIMO (para garantir que fiquem visíveis)
     renderer.renderBoundaryLines(leftBoundary);
     renderer.renderBoundaryLines(rightBoundary);
 

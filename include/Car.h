@@ -3,7 +3,6 @@
 #include "Model.h"
 #include <glm/glm.hpp>
 
-// Forward declaration: diz ao compilador que existe uma classe Renderer.
 class Renderer;
 
 class Car {
