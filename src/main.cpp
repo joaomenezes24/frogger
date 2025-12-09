@@ -5,6 +5,8 @@
 #include <GLFW/glfw3.h>
 #include "Game.h"
 
+// No main.cpp, após game.init(), adicione esta linha:
+
 int main() {
     if (!glfwInit()) {
         std::cerr << "Failed to init GLFW\n"; return -1;
@@ -28,6 +30,8 @@ int main() {
 
     using clock = std::chrono::high_resolution_clock;
     auto last = clock::now();
+    
+    bool gameStarted = false;  // Flag para iniciar o jogo
 
     while (!glfwWindowShouldClose(window)) {
         auto now = clock::now();
@@ -36,6 +40,13 @@ int main() {
 
         glfwPollEvents();
         game.processInput(window);
+        
+        // Iniciar o jogo no primeiro frame (após window estar pronta)
+        if (!gameStarted) {
+            game.startGame();
+            gameStarted = true;
+        }
+        
         game.update(dt);
         game.render(window);
 

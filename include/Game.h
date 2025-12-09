@@ -7,6 +7,7 @@ struct GLFWwindow;
 #include "Car.h"
 #include "Renderer.h"
 #include "Road.h"
+#include "BoundaryLines.h"
 #include <vector>
 #include <memory>
 #include <string>
@@ -21,6 +22,7 @@ public:
     void processInput(GLFWwindow *window);
     void update(float dt);
     void render(GLFWwindow *window);
+    void startGame();  // NOVO método
 
 private:
     Renderer renderer;
@@ -36,8 +38,12 @@ private:
     float spawnTimer = 0.0f;
     float wallZ = 0.0f;
     
-    // --- NOVO: Limite dos arbustos iniciais ---
-    float startBushZ = 0.0f; 
+    // Limite dos arbustos iniciais
+    float startBushZ = 0.0f;
+    
+    // Linhas de limite laterais
+    BoundaryLines leftBoundary;
+    BoundaryLines rightBoundary;
 
     // Variáveis de Estado
     int lives = 5;
@@ -52,6 +58,15 @@ private:
     static constexpr int NUM_LANES = 5;
     static constexpr float LANE_WIDTH = 3.0f;
     static constexpr float ROAD_LENGTH = 120.0f;
+
+    // NOVAS CONSTANTES PARA AS LINHAS DE LIMITE:
+    static constexpr float LEFT_BOUNDARY_X = -20.0f;
+    static constexpr float RIGHT_BOUNDARY_X = 20.0f;
+
+    // Sistema de countdown
+    bool countdownActive = false;
+    float countdownTimer = 5.0f;
+    int countdownNumber = 5;
 
     float getLaneSpeed(int lane) const;
 };

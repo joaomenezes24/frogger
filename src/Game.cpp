@@ -99,17 +99,34 @@ bool Game::init(int width, int height)
     player.setModel(&frogModel);
 
     std::srand((unsigned)std::time(nullptr));
-    resetGame();
+
+    // Inicializar linhas de limite
+    float sidewalkZForBoundary = road.getSidewalkZ();
+    float boundaryStartZ = sidewalkZForBoundary;
+    float boundaryEndZ = wallZ - 3.0f;
+    
+    leftBoundary.init(LEFT_BOUNDARY_X, boundaryStartZ, boundaryEndZ);
+    rightBoundary.init(RIGHT_BOUNDARY_X, boundaryStartZ, boundaryEndZ);
+    
+    // Inicializar valores padrão
+    lives = 5;
+    gameWon = false;
+    gameLost = false;
+    countdownActive = false;
 
     return true;
 }
 
-void Game::resetGame()
+void Game::startGame()
 {
     lives = 5;
     gameWon = false;
     gameLost = false;
     spawnTimer = 0.0f;
+    
+    countdownActive = true;
+    countdownTimer = 5.0f;
+    countdownNumber = 5;
 
     cars.clear();
 
@@ -125,9 +142,18 @@ void Game::resetGame()
     auto c2 = std::make_unique<Car>(&carModels[r2], getLaneSpeed(-1), -1);
     c2->setPosition({50.0f, 0.1f, road.getLaneZ(-1)});
     cars.push_back(std::move(c2));
-
-    updateTitle();
 }
+
+// SUBSTITUA a função resetGame no Game.cpp por esta:
+
+void Game::resetGame()
+{
+    startGame();
+    updateTitle();  // Atualizar título imediatamente
+}
+
+
+// SUBSTITUA a função updateTitle no Game.cpp por esta:
 
 void Game::updateTitle()
 {
@@ -138,6 +164,11 @@ void Game::updateTitle()
         glfwSetWindowTitle(gameWindow, "VOCE GANHOU! APERTE ENTER PARA TENTAR NOVAMENTE");
     else if (gameLost)
         glfwSetWindowTitle(gameWindow, "VOCE PERDEU! PARA JOGAR NOVAMENTE APERTE ENTER");
+    else if (countdownActive)
+    {
+        std::string title = "O JOGO VAI COMECAR EM: " + std::to_string(countdownNumber);
+        glfwSetWindowTitle(gameWindow, title.c_str());
+    }
     else
     {
         std::string title = "VIDAS - " + std::to_string(lives) + "/5";
@@ -147,9 +178,15 @@ void Game::updateTitle()
 
 bool Game::canMoveTo(float newX, float newZ)
 {
+    // Verificar limites laterais (posição das linhas amarelas)
+    if (newX < LEFT_BOUNDARY_X || newX > RIGHT_BOUNDARY_X)
+        return false;
+    
+    // Verificar limite superior (arbustos)
     if (newZ > startBushZ)
         return false;
 
+    // Verificar colisão com o muro
     float wallThickness = 1.5f;
     bool isInsideWallZone = (newZ <= wallZ + wallThickness) && (newZ >= wallZ - wallThickness);
 
@@ -163,9 +200,9 @@ bool Game::canMoveTo(float newX, float newZ)
         if (newX < gapMin || newX > gapMax)
             return false;
     }
+    
     return true;
 }
-
 float Game::getLaneSpeed(int lane) const
 {
     const float MIN_SPEED = 4.0f;
@@ -190,7 +227,12 @@ void Game::processInput(GLFWwindow *window)
             resetGame();
         return;
     }
+    
+    // BLOQUEAR MOVIMENTO DURANTE COUNTDOWN
+    if (countdownActive)
+        return;
 
+    // ... resto do código de processInput continua normal ...
     static bool pressedForward = false, pressedLeft = false, pressedBack = false, pressedRight = false;
     glm::vec3 currentPos = player.getPosition();
     float step = 3.0f;
@@ -249,13 +291,108 @@ void Game::processInput(GLFWwindow *window)
     }
     else
         pressedRight = false;
+    
+    if (countdownActive)
+    return;
 }
+
+// SUBSTITUA a função update no Game.cpp por esta:
+
+// SUBSTITUA a função update no Game.cpp por esta:
+
+// SUBSTITUA a função update no Game.cpp por esta:
 
 void Game::update(float dt)
 {
     if (gameWon || gameLost)
         return;
 
+    // PROCESSAR COUNTDOWN
+    if (countdownActive)
+    {
+        countdownTimer -= dt;
+        
+        // Atualizar o número exibido baseado no tempo restante
+        int oldNumber = countdownNumber;
+        
+        if (countdownTimer > 4.0f)
+            countdownNumber = 5;
+        else if (countdownTimer > 3.0f)
+            countdownNumber = 4;
+        else if (countdownTimer > 2.0f)
+            countdownNumber = 3;
+        else if (countdownTimer > 1.0f)
+            countdownNumber = 2;
+        else if (countdownTimer > 0.0f)
+            countdownNumber = 1;
+        
+        // Atualizar título quando o número muda
+        if (oldNumber != countdownNumber)
+        {
+            updateTitle();
+            std::cout << "Countdown: " << countdownNumber << std::endl;
+        }
+        
+        // Terminar countdown
+        if (countdownTimer <= 0.0f)
+        {
+            countdownActive = false;
+            countdownTimer = 0.0f;
+            updateTitle(); // Atualizar para mostrar vidas
+            std::cout << "Countdown terminado! Jogo iniciado!" << std::endl;
+        }
+        
+        // Carros continuam se movendo durante countdown
+        for (auto &c : cars)
+            c->update(dt);
+        
+        // Remover carros fora da tela
+        cars.erase(std::remove_if(cars.begin(), cars.end(), [](const std::unique_ptr<Car> &c)
+                                  { return c->isOffscreen(); }),
+                   cars.end());
+        
+        // Spawn de carros continua
+        spawnTimer += dt;
+        if (spawnTimer > 0.4f)
+        {
+            int lane = (std::rand() % NUM_LANES) - NUM_LANES / 2;
+            float z = road.getLaneZ(lane);
+            float spawnX = 60.0f;
+
+            bool isSafe = true;
+            float safeDist = 15.0f;
+
+            for (const auto &otherCar : cars)
+            {
+                glm::vec3 pos = otherCar->getPosition();
+                if (std::abs(pos.z - z) < 0.5f)
+                {
+                    if (std::abs(pos.x - spawnX) < safeDist)
+                    {
+                        isSafe = false;
+                        break;
+                    }
+                }
+            }
+
+            if (isSafe)
+            {
+                spawnTimer = 0.0f;
+                float speed = getLaneSpeed(lane);
+                int dir = -1;
+                int randomModelIndex = std::rand() % 8;
+                auto car = std::make_unique<Car>(&carModels[randomModelIndex], speed, dir);
+                car->setPosition({spawnX, 0.1f, z});
+                cars.push_back(std::move(car));
+            }
+            else
+                spawnTimer = 0.5f;
+        }
+        
+        return; // Não processar colisão durante countdown
+    }
+
+    // JOGO NORMAL (após countdown)
     player.update(dt);
 
     glm::vec3 playerPos = player.getPosition();
@@ -335,17 +472,18 @@ void Game::render(GLFWwindow *window)
     (void)window;
     renderer.beginFrame();
 
+    // 1. RENDERIZAR ESTRADA PRIMEIRO (com suas cores)
     renderer.renderRoad(road);
 
+    // 2. RENDERIZAR MURO
     glm::mat4 wallModelMatrix = glm::mat4(1.0f);
     wallModelMatrix = glm::translate(wallModelMatrix, glm::vec3(-7.5f, -0.4f, wallZ));
     wallModelMatrix = glm::rotate(wallModelMatrix, glm::radians(-180.0f), glm::vec3(1.0f, 0.0f, 0.0f));
     wallModelMatrix = glm::rotate(wallModelMatrix, glm::radians(180.0f), glm::vec3(0.0f, 0.0f, 1.0f));
     wallModelMatrix = glm::scale(wallModelMatrix, glm::vec3(2.7f, 2.7f, 2.7f));
-
-    // Se não achar a textura do muro, usa esse marrom
     renderer.renderModelWithMatrix(wallModel, wallModelMatrix, glm::vec3(0.3f, 0.15f, 0.05f));
 
+    // 3. RENDERIZAR FLORESTA
     float startForestZ = wallZ - 0.99f;
     float rowSpacing = 2.0f;
     for (int i = 0; i < 5; i++)
@@ -357,6 +495,7 @@ void Game::render(GLFWwindow *window)
         renderer.renderModelWithMatrix(bushModel, forestMatrix, glm::vec3(0.0f, 0.4f, 0.0f));
     }
 
+    // 4. RENDERIZAR ARBUSTOS DO INÍCIO
     float sidewalkZ = road.getSidewalkZ();
     float bushZ = sidewalkZ + 2.45f;
     glm::mat4 bushModelMatrix = glm::mat4(1.0f);
@@ -364,9 +503,14 @@ void Game::render(GLFWwindow *window)
     bushModelMatrix = glm::scale(bushModelMatrix, glm::vec3(1.0f, 1.0f, 1.0f));
     renderer.renderModelWithMatrix(bushModel, bushModelMatrix, glm::vec3(0.1f, 0.6f, 0.1f));
 
+    // 5. RENDERIZAR SAPO E CARROS
     player.render(renderer);
     for (auto &c : cars)
         c->render(renderer);
+
+    // 6. RENDERIZAR LINHAS DE LIMITE POR ÚLTIMO (para garantir que fiquem visíveis)
+    renderer.renderBoundaryLines(leftBoundary);
+    renderer.renderBoundaryLines(rightBoundary);
 
     renderer.endFrame();
 }

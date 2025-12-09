@@ -3,6 +3,8 @@
 #include "Shader.h"
 #include "Model.h"
 #include "Road.h"
+#include "BoundaryLines.h"
+
 
 class Renderer
 {
@@ -14,6 +16,7 @@ public:
 
     void setCameraTilt(float tilt);
     void setCameraDistance(float distance);
+    void renderBoundaryLines(BoundaryLines& lines);
 
     // --- MUDANÇA: Adicionei 'glm::vec3 color' no final dessas funções ---
 
